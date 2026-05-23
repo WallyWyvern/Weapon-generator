@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public abstract class WeaponDamageDecorator
+public abstract class WeaponDecorator
 {
     public int damage { get; set; }
     public DamageType damageType { get; set; }
-    public WeaponDamageDecorator(int _damage)
+    public WeaponDecorator(int _damage)
     {
         damage = _damage;
 
@@ -14,7 +14,7 @@ public abstract class WeaponDamageDecorator
 }
 
 
-public class FireDecorator : WeaponDamageDecorator
+public class FireDecorator : WeaponDecorator
 {
     // tick speed, duration
 
