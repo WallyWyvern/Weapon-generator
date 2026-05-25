@@ -9,7 +9,7 @@ public interface IEffect
 public interface IHandler
 {
     IEffect NextHandler { get; set; }
-    void Handle(ref Dictionary<DamageType, int> damageDict);
+    void Handle(ref Dictionary<EffectType, int> damageDict);
 }
 
 public abstract class BaseStatusEffect

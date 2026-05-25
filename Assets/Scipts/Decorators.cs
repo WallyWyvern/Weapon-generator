@@ -2,11 +2,11 @@ using UnityEngine;
 
 public abstract class WeaponDecorator
 {
-    public int damage { get; set; }
-    public DamageType damageType { get; set; }
-    public WeaponDecorator(int _damage)
+    public int intensity { get; set; }
+    public EffectType effectType { get; set; }
+    public WeaponDecorator(int _intensity)
     {
-        damage = _damage;
+        intensity = _intensity;
 
     }
 
@@ -20,12 +20,12 @@ public class FireDecorator : WeaponDecorator
 
     public FireDecorator(int _damage) : base(_damage) 
     {
-        damageType = DamageType.Fire;
+        effectType = EffectType.Fire;
     }
 
     public override IWeapon Decorate(IWeapon weapon)
     {
-        weapon.DamageTypes.Add(damageType, damage);
+        weapon.weaponEffects.Add(effectType, intensity);
         return weapon;
     }
 }
