@@ -3,26 +3,31 @@ using UnityEngine;
 
 public interface IEffect
 { 
-
+    void UpdateEffect();
 }
 
 public interface IHandler
 {
     IEffect NextHandler { get; set; }
-    void Handle(ref Dictionary<EffectType, int> damageDict);
+    void Handle(List<IEffect> activeEffects, IStatusEffectable owner);
 }
 
-public abstract class BaseStatusEffect
+public abstract class BaseStatusEffect : IHandler, IEffect
 {
     protected float duration;
+
+    public IEffect NextHandler { get => NextHandler; set{ NextHandler = value; } }
+
     public BaseStatusEffect(int intensity) { 
         CalculateStatusEffect(intensity);
-        Debug.Log(intensity);
+        //Debug.Log(intensity);
     }
 
     protected abstract void CalculateStatusEffect(int intensity);
-    protected abstract void ApplyStatus();
 
+    public abstract void Handle(List<IEffect> activeEffects, IStatusEffectable owner);
+
+    public abstract void UpdateEffect();
 }
 
 public class FireStatusEffect : BaseStatusEffect
@@ -33,8 +38,14 @@ public class FireStatusEffect : BaseStatusEffect
         
     }
 
-    protected override void ApplyStatus()
+    public override void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
     {
+        throw new System.NotImplementedException();
+    }
+
+    public override void UpdateEffect()
+    {
+        throw new System.NotImplementedException();
     }
 
     protected override void CalculateStatusEffect(int intensity)

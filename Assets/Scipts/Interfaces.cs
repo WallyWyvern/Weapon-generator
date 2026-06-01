@@ -27,8 +27,13 @@ public interface IMeleeWeapon : IWeapon
 
 }
 
-public interface IDamageable 
+public interface IStatusEffectable 
 {
     List<IEffect> activeEffects { get; set; }
     void HandleEffects();
+}
+
+public interface IDamageable
+{
+    void Damage(float damage);
 }
