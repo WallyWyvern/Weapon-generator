@@ -2,30 +2,24 @@ using UnityEngine;
 
 public abstract class WeaponDecorator
 {
-    public int intensity { get; set; }
-    public EffectType effectType { get; set; }
-    public WeaponDecorator(int _intensity)
+    public WeaponDecorator()
     {
-        intensity = _intensity;
-
     }
 
-    public abstract IWeapon Decorate(IWeapon weapon);
+    public abstract IWeapon Decorate(IWeapon weapon, int intensity);
 }
 
 
 public class FireDecorator : WeaponDecorator
 {
-    // tick speed, duration
-
-    public FireDecorator(int _damage) : base(_damage) 
+    public FireDecorator() : base() 
     {
-        effectType = EffectType.Fire;
     }
 
-    public override IWeapon Decorate(IWeapon weapon)
+    public override IWeapon Decorate(IWeapon weapon, int intensity)
     {
-        weapon.weaponEffects.Add(effectType, intensity);
+        FireStatusEffect fireEffect = new FireStatusEffect(intensity);
+        weapon.weaponEffects.Add(fireEffect);
         return weapon;
     }
 }

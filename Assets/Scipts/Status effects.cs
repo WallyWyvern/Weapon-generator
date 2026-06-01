@@ -1,22 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEffect
+public interface IEffect : IHandler
 { 
     void UpdateEffect();
 }
 
 public interface IHandler
 {
-    IEffect NextHandler { get; set; }
+    IHandler NextHandler { get; set; }
     void Handle(List<IEffect> activeEffects, IStatusEffectable owner);
 }
 
-public abstract class BaseStatusEffect : IHandler, IEffect
+public abstract class BaseStatusEffect : IEffect
 {
     protected float duration;
-
-    public IEffect NextHandler { get => NextHandler; set{ NextHandler = value; } }
+    public IHandler NextHandler { get; set; }
 
     public BaseStatusEffect(int intensity) { 
         CalculateStatusEffect(intensity);
@@ -25,7 +24,11 @@ public abstract class BaseStatusEffect : IHandler, IEffect
 
     protected abstract void CalculateStatusEffect(int intensity);
 
-    public abstract void Handle(List<IEffect> activeEffects, IStatusEffectable owner);
+    public void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
+    { 
+        UpdateEffect();
+        NextHandler?.Handle(activeEffects, owner);
+    }
 
     public abstract void UpdateEffect();
 }
@@ -38,18 +41,13 @@ public class FireStatusEffect : BaseStatusEffect
         
     }
 
-    public override void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public override void UpdateEffect()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("I have updated the fire statis effect");
     }
 
     protected override void CalculateStatusEffect(int intensity)
     {
-        Debug.Log("im calculating the status effect");
+        Debug.Log("im calculating the fire status effect");
     }
 }

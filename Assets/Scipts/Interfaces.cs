@@ -14,7 +14,7 @@ public enum EffectType
 public interface IWeapon
 {
     // weapon stuff
-    Dictionary<EffectType, int> weaponEffects { get; set; }
+    List<IEffect> weaponEffects { get; set; }
 }
 
 public interface IRangedWeapon : IWeapon
