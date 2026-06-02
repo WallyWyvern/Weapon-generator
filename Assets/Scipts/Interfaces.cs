@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum EffectType
@@ -10,6 +11,13 @@ public enum EffectType
     Normal
 }
 
+
+public interface IPoolable
+{
+    bool active { get; set; }
+    void OnEnableObject();
+    void OnDissableObject();
+}
 
 public interface IWeapon
 {
