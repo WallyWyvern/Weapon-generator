@@ -2,15 +2,6 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum EffectType
-{
-    Fire,
-    Ice,
-    Poison,
-    Arcane,
-    Normal
-}
-
 
 public interface IPoolable
 {
@@ -35,7 +26,7 @@ public interface IMeleeWeapon : IWeapon
 
 }
 
-public interface IStatusEffectable 
+public interface IStatusEffectable : IDamageable
 {
     List<IEffect> activeEffects { get; set; }
     void HandleEffects();

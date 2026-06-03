@@ -1,0 +1,69 @@
+@startuml
+interface "Ipoolable" {
++active : bool
++void OnEnableObject()
++void OnDissableObject()
+}
+
+interface "Iweapon" {
++weaponEffects : List<Ieffect>
+}
+
+interface "Istatuseffectable" {
++activeEffects : List<Ieffect>
++void HandleEffects()
+}
+
+interface "Idamageable" {
++void Damage(float damage)
+}
+
+interface "Ieffect" {
++void UpdateEffect()
+}
+
+interface "Ihandler" {
++NextHandler : Ihandler
++void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
+}
+
+
+abstract class "base_status_effect"{
+#duration : float
++BaseStatusEffect(int intensity)
+#void CalculateStatusEffect(int intensity)
+}
+
+abstract class "weapon_decorator" {
++IWeapon Decorate(IWeapon weapon, int intensity)
+}
+
+class "fire_status_effect"
+class "fire_decorator"
+
+class "object_pool" {
++T RequestObject()
++T ActivateItem(T item)
++void ReturnObjectToPool(T item)
+}
+
+class "weapon"
+class "enemy"
+class "bullet"
+
+
+
+Ieffect <|.. Ihandler
+weapon <|.. Iweapon
+base_status_effect <|.. Ieffect
+Istatuseffectable <|.. Idamageable
+
+weapon o-- bullet
+
+object_pool --> Ipoolable
+
+
+fire_decorator <|-- weapon_decorator
+fire_status_effect <|-- base_status_effect
+enemy <|-- Istatuseffectable
+@enduml
