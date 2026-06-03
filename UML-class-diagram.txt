@@ -66,4 +66,9 @@ object_pool --> Ipoolable
 fire_decorator <|-- weapon_decorator
 fire_status_effect <|-- base_status_effect
 enemy <|-- Istatuseffectable
+
+fire_status_effect -- fire_decorator 
+enemy -- fire_status_effect
+weapon -- fire_decorator
+object_pool -- bullet
 @enduml
