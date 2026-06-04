@@ -36,3 +36,8 @@ public interface IDamageable
 {
     void Damage(float damage);
 }
+
+public interface IGameObject
+{
+    GameObject gameObject { get; set; }
+}
