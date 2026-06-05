@@ -14,16 +14,23 @@ public interface IWeapon
 {
     // weapon stuff
     List<IEffect> weaponEffects { get; set; }
+    void Use();
 }
 
 public interface IRangedWeapon : IWeapon
 {
+    int magSize { get; set; }
+    float reloadSpeed { get; set; }
+    float attackSpeed { get; set; }
+    float projectileSpeed { get; set; }
 
 }
 
-public interface IMeleeWeapon : IWeapon
+public interface IProjectile
 {
-
+    List<IEffect> effects { get; set; }
+    float projectileSpeed { get; set; }
+    void Move(Vector3 dir);
 }
 
 public interface IStatusEffectable : IDamageable
