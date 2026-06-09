@@ -7,9 +7,9 @@ public class EventManager
     public EventManager() { instance = this; }
 
     public event Action onSendUpdateTick;
-    public void SendUpdateTick()
-    { 
-        if (onSendUpdateTick != null) { onSendUpdateTick(); }
-    }
+    public void SendUpdateTick() { if (onSendUpdateTick != null) { onSendUpdateTick(); } }
+
+    public event Action<float> onTickTimers;
+    public void TickTimers(float delta) { if (onTickTimers != null) { onTickTimers(delta); } }
     
 }

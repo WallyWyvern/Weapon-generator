@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -28,7 +29,7 @@ public class Gun : BaseRangedWeapon
     public Gun(GameObject go, GameObject projectileGo) : base(go, projectileGo) 
     {
         // debug
-        projectileLifeTime = 2;
+        projectileLifeTime = 2f;
         gameObject.transform.position = new Vector3(0, 0, 0);
         gameObject.SetActive(true);
     }
@@ -36,61 +37,19 @@ public class Gun : BaseRangedWeapon
     public override void Use()
     {
         var tempBullet = bulletPool.RequestObject();
-        tempBullet.Setup(projectileObject, new Vector3(1, 1, 0), 0.1f, weaponEffects, gameObject.transform.position);
-        // ask about invoking without monobehaviour
-    }
-}
+        tempBullet.onBulletTimerFinished += HandleProjectileFinished;
+        tempBullet.Setup(projectileObject, new Vector3(1, 1, 0), 0.1f, projectileLifeTime, weaponEffects, gameObject.transform.position);
 
-public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
-{
-    public List<IEffect> effects { get; set; }
-    public float projectileSpeed { get; set; }
-    public GameObject gameObject { get; set; }
-    public float lifeTime { get; set; }
-    public Vector3 direction { get; set; }
-    public bool active { get; set; }
-
-    protected BaseProjectile() 
-    {
-        
+        int x = 10;
     }
 
-    public virtual void Setup(GameObject go, Vector3 dir, float speed, List<IEffect> effects, Vector3 startPosition) 
+    private void HandleProjectileFinished(Bullet projectile)
     {
-        this.gameObject = go;
-        this.direction = dir;
-        this.projectileSpeed = speed;
-        this.effects = effects;
-        gameObject.transform.position = startPosition;
-    }
-
-    public virtual void Move() // trigger on update event
-    {
-        if (!active) return;
-        gameObject.transform.position += direction * projectileSpeed;
-    }
-
-    public virtual void OnEnableObject()
-    {
-        gameObject?.SetActive(true);
-        EventManager.instance.onSendUpdateTick += this.Move; // why does instance of bullet get triggered by this?
-    }
-
-    public virtual void OnDissableObject()
-    {
-        gameObject?.SetActive(false);
-        EventManager.instance.onSendUpdateTick -= this.Move;
+        bulletPool.ReturnObjectToPool(projectile);
     }
 }
 
 
-public class Bullet : BaseProjectile
-{
-    public Bullet() { //Debug.Log("Bullet constructor triggered");
-        
-    }
-
-}
 
 
 

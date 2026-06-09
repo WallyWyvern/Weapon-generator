@@ -19,15 +19,24 @@ public class ObjectPool<T> where T : IPoolable
 
     public T RequestObject()
     {
-        if (inactivePool.Count > 0) return ActivateItem(inactivePool[0]);
+        if (inactivePool.Count > 0)
+        {
+            Debug.Log("Reusing item");
+            return ActivateItem(inactivePool[0]);
+        }
+        else { Debug.Log("creating new item"); }
         return ActivateItem(AddNewItemToPool());
     }
 
     public T ActivateItem(T item)
     {
+
+        if (inactivePool.Contains(item))
+        {
+            inactivePool.Remove(item);
+        }
         item.OnEnableObject();
         item.active = true;
-        if (inactivePool.Contains(item)) inactivePool.Remove(item);
         activePool.Add(item);
         return item;
     }

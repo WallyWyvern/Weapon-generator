@@ -52,6 +52,7 @@ public class Main : MonoBehaviour
     {
         // Update game
         EventManager.instance.SendUpdateTick();
+        EventManager.instance.TickTimers(Time.fixedDeltaTime);
 
         var moveDirection = moveAction.action.ReadValue<Vector3>();
         player.Move(moveDirection);
