@@ -23,6 +23,7 @@ public interface IRangedWeapon : IWeapon
     float reloadSpeed { get; set; }
     float attackSpeed { get; set; }
     float projectileSpeed { get; set; }
+    float projectileLifeTime { get; set; }
 
 }
 
@@ -30,7 +31,7 @@ public interface IProjectile
 {
     List<IEffect> effects { get; set; }
     float projectileSpeed { get; set; }
-    void Move(Vector3 dir);
+    void Move();
 }
 
 public interface IStatusEffectable : IDamageable
