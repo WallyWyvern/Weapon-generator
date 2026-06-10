@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BaseRangedWeapon : IRangedWeapon, IGameObject
+public abstract class BaseRangedWeapon : IRangedWeapon
 {
     public int magSize { get; set; }
     public float reloadSpeed { get; set; }
@@ -15,7 +15,7 @@ public abstract class BaseRangedWeapon : IRangedWeapon, IGameObject
 
     public BaseRangedWeapon(GameObject go, GameObject projectileGo)
     {
-        gameObject = go;
+        gameObject = GameObject.Instantiate(go);
         this.projectileObject = projectileGo;
     }
 
@@ -30,17 +30,18 @@ public class Gun : BaseRangedWeapon
     {
         // debug
         projectileLifeTime = 2f;
+        projectileSpeed = 0.5f;
         gameObject.transform.position = new Vector3(0, 0, 0);
         gameObject.SetActive(true);
     }
 
     public override void Use()
     {
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var aimDirection = mousePosition - gameObject.transform.position;
         var tempBullet = bulletPool.RequestObject();
         tempBullet.onBulletTimerFinished += HandleProjectileFinished;
-        tempBullet.Setup(projectileObject, new Vector3(1, 1, 0), 0.1f, projectileLifeTime, weaponEffects, gameObject.transform.position);
-
-        int x = 10;
+        tempBullet.Setup(projectileObject, aimDirection.normalized, projectileSpeed, projectileLifeTime, weaponEffects, gameObject.transform.position);
     }
 
     private void HandleProjectileFinished(Bullet projectile)
@@ -63,24 +64,24 @@ public class Gun : BaseRangedWeapon
 
 
 
-public class TestWeapon : IWeapon
-{
+//public class TestWeapon : IWeapon
+//{
 
-    public List<IEffect> weaponEffects { get; set; }
+//    public List<IEffect> weaponEffects { get; set; }
 
-    public TestWeapon()
-    {
-        weaponEffects = new List<IEffect>();
-    }
+//    public TestWeapon()
+//    {
+//        weaponEffects = new List<IEffect>();
+//    }
 
-    public void Use()
-    {
-        throw new System.NotImplementedException();
-    }
+//    public void Use()
+//    {
+//        throw new System.NotImplementedException();
+//    }
 
-    // future fire mechanics n stuff
-    // object pool stuff
-}
+//    // future fire mechanics n stuff
+//    // object pool stuff
+//}
 
 public class TestEnemy : IStatusEffectable, IDamageable
 {

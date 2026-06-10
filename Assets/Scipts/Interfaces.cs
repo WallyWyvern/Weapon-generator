@@ -10,7 +10,7 @@ public interface IPoolable
     void OnDissableObject();
 }
 
-public interface IWeapon
+public interface IWeapon : IGameObject
 {
     // weapon stuff
     List<IEffect> weaponEffects { get; set; }

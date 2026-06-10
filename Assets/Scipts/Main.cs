@@ -32,9 +32,10 @@ public class Main : MonoBehaviour
         moveAction.action.Enable();
         fireAction.action.started += triggerFire;
 
+        player = new Player(playerObject, playerSpeed, new Vector3(0.45f, 0.1f, 0f));
         testGun = new Gun(weaponObject, bulletObject);
 
-        DebugTesting();
+        //DebugTesting();
     }
 
     private void triggerFire(InputAction.CallbackContext context)
@@ -66,7 +67,7 @@ public class Main : MonoBehaviour
         //testWeapon = testDecorator.Decorate(testWeapon, 10);
         //testWeapon.weaponEffects[0].Handle(testWeapon.weaponEffects, temp);
 
-        player = new Player(playerObject, playerSpeed);
+        
 
     }
 }
