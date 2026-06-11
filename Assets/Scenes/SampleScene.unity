@@ -375,6 +375,7 @@ MonoBehaviour:
   playerObject: {fileID: 8423152128608832085, guid: 5796533161f33d34f8d2099c0d385014, type: 3}
   bulletObject: {fileID: 5555925035626983244, guid: 9a3a278274b4118439f21f9f15ab1a7d, type: 3}
   weaponObject: {fileID: 1367219080035559301, guid: de5bfc357c6df274abf49a72d6a66b0f, type: 3}
+  enemyObject: {fileID: 2865861429354547045, guid: deee0109db9a90a42b40120294ae420e, type: 3}
   playerSpeed: 0.1
 --- !u!4 &767506628
 Transform:

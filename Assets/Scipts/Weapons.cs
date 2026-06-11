@@ -13,9 +13,13 @@ public abstract class BaseRangedWeapon : IRangedWeapon
     public GameObject gameObject { get; set; }
     public GameObject projectileObject { get; set; }
 
-    public BaseRangedWeapon(GameObject go, GameObject projectileGo)
+    protected Player owner;
+
+    public BaseRangedWeapon(GameObject go, GameObject projectileGo, Player _owner, Vector3 offset)
     {
-        gameObject = GameObject.Instantiate(go);
+        owner = _owner;
+        gameObject = GameObject.Instantiate(go, owner.gameObject.transform);
+        gameObject.transform.localPosition = offset;
         this.projectileObject = projectileGo;
     }
 
@@ -26,77 +30,31 @@ public abstract class BaseRangedWeapon : IRangedWeapon
 public class Gun : BaseRangedWeapon 
 {
     private ObjectPool<Bullet> bulletPool = new ObjectPool<Bullet>();
-    public Gun(GameObject go, GameObject projectileGo) : base(go, projectileGo) 
+    public Gun(GameObject go, GameObject projectileGo, Player owner, Vector3 offset) : base(go, projectileGo, owner, offset) 
     {
         // debug
         projectileLifeTime = 2f;
-        projectileSpeed = 0.5f;
-        gameObject.transform.position = new Vector3(0, 0, 0);
+        projectileSpeed = 10f;
+        //gameObject.transform.position = new Vector3(0, 0, 0);
         gameObject.SetActive(true);
     }
 
     public override void Use()
     {
-        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        var aimDirection = mousePosition - gameObject.transform.position;
+        //owner.gameObject.transform.up = aimDirection;
         var tempBullet = bulletPool.RequestObject();
         tempBullet.onBulletTimerFinished += HandleProjectileFinished;
-        tempBullet.Setup(projectileObject, aimDirection.normalized, projectileSpeed, projectileLifeTime, weaponEffects, gameObject.transform.position);
+        tempBullet.Setup(projectileObject, 
+            owner.aimDirection,
+            projectileSpeed, 
+            projectileLifeTime, 
+            weaponEffects, 
+            gameObject.transform.position);
     }
 
     private void HandleProjectileFinished(Bullet projectile)
     {
+        projectile.onBulletTimerFinished -= HandleProjectileFinished;
         bulletPool.ReturnObjectToPool(projectile);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//public class TestWeapon : IWeapon
-//{
-
-//    public List<IEffect> weaponEffects { get; set; }
-
-//    public TestWeapon()
-//    {
-//        weaponEffects = new List<IEffect>();
-//    }
-
-//    public void Use()
-//    {
-//        throw new System.NotImplementedException();
-//    }
-
-//    // future fire mechanics n stuff
-//    // object pool stuff
-//}
-
-public class TestEnemy : IStatusEffectable, IDamageable
-{
-
-    public List<IEffect> activeEffects { get; set; }
-
-    public TestEnemy() { }
-
-    public void Damage(float damage)
-    {
-        
-    }
-
-    public void HandleEffects()
-    {
-        
     }
 }

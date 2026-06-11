@@ -1,30 +1,28 @@
 using UnityEngine;
 
-public class Player : IGameObject
+public class Player : BaseActor
 {
-    public IWeapon weapon;
-    public GameObject gameObject { get; set; }
-    
-    private float speed;
-    private Vector3 weaponPos;
 
-    public Player(GameObject go, float _speed, Vector3 _weaponPos)
+    public Vector3 aimDirection;
+
+    public Player(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos) : base(go, speed, itemPos, health, initPos)
     {
-        gameObject = GameObject.Instantiate(go);
-        speed = _speed;
-        weaponPos = _weaponPos;
     }
 
-    // make a child without monobaviour?
-
-    // Update is called once per frame
-    void Update()
+    public override void Move(Vector3 moveVector)
     {
-        
+        gameObject.transform.position += moveVector.normalized * moveSpeed;
+
+        var mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = 0;
+        aimDirection = mousePosition - gameObject.transform.position;
+        aimDirection.Normalize();
+        gameObject.transform.up = aimDirection;
     }
 
-    public void Move(Vector3 moveVector)
+    public override void SetHeldObject(IUsable item)
     {
-        gameObject.transform.position += moveVector.normalized * speed; 
+        heldItem = item;
+        heldItem.gameObject.transform.localPosition = heldItemPos;
     }
 }

@@ -38,7 +38,7 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
     public virtual void Move() // trigger on update event
     {
         if (!active) return;
-        gameObject.transform.position += direction * projectileSpeed;
+        gameObject.transform.position += direction.normalized * projectileSpeed * Time.fixedDeltaTime;
     }
 
     public virtual void OnEnableObject()
@@ -69,7 +69,7 @@ public class Bullet : BaseProjectile
 
     protected override void OnProjectileTimerFinished()
     {
-        onBulletTimerFinished?.Invoke(this);
+         onBulletTimerFinished?.Invoke(this);
     }
 
 }

@@ -12,15 +12,15 @@ public class Main : MonoBehaviour
     [SerializeField] GameObject playerObject;
     [SerializeField] GameObject bulletObject;
     [SerializeField] GameObject weaponObject;
+    [SerializeField] GameObject enemyObject;
 
     [Header("Game settings")]
     [SerializeField] float playerSpeed = 0.1f;
 
-    // debug variables
-    private Gun testGun;
-
     // Variables
     private Player player;
+    private IUsable playerItem;
+    private Enemy targetDummy;
     private EventManager eventManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -32,15 +32,12 @@ public class Main : MonoBehaviour
         moveAction.action.Enable();
         fireAction.action.started += triggerFire;
 
-        player = new Player(playerObject, playerSpeed, new Vector3(0.45f, 0.1f, 0f));
-        testGun = new Gun(weaponObject, bulletObject);
-
-        //DebugTesting();
+        InitializeGame();
     }
 
     private void triggerFire(InputAction.CallbackContext context)
     {
-        testGun.Use();
+        playerItem.Use();
     }
 
     // Update is called once per frame
@@ -59,15 +56,27 @@ public class Main : MonoBehaviour
         player.Move(moveDirection);
     }
 
-    private void DebugTesting()
+    private void InitializeGame()
     {
-        //IWeapon testWeapon = new TestWeapon();
-        //IStatusEffectable temp = new TestEnemy();
-        //var testDecorator = new FireDecorator();
-        //testWeapon = testDecorator.Decorate(testWeapon, 10);
-        //testWeapon.weaponEffects[0].Handle(testWeapon.weaponEffects, temp);
+        player = new Player(
+            playerObject, 
+            playerSpeed, 
+            new Vector3(0f, 0.5f, 0f), 
+            100f, 
+            new Vector3(0f,0f,0f));
+        targetDummy = new Enemy(
+            enemyObject, 
+            0f, 
+            new Vector3(0f, 0f, 0f), 
+            999f,
+            new Vector3(0f, 3f, 0f));
+        var gun = new Gun(
+            weaponObject, 
+            bulletObject, 
+            player, 
+            player.heldItemPos);
+        // decorate gun
 
-        
-
+        playerItem = gun;
     }
 }

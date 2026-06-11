@@ -10,11 +10,15 @@ public interface IPoolable
     void OnDissableObject();
 }
 
-public interface IWeapon : IGameObject
+public interface IUsable : IGameObject
+{
+    void Use();
+}
+
+public interface IWeapon : IUsable
 {
     // weapon stuff
     List<IEffect> weaponEffects { get; set; }
-    void Use();
 }
 
 public interface IRangedWeapon : IWeapon
@@ -42,6 +46,7 @@ public interface IStatusEffectable : IDamageable
 
 public interface IDamageable
 {
+    float health { get; set; }
     void Damage(float damage);
 }
 
