@@ -10,6 +10,8 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
     public float health { get; set; }
     public List<IEffect> activeEffects { get; set; }
 
+    protected Collider collider { get; set; }
+
     public BaseActor(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos)
     {
         gameObject = GameObject.Instantiate(go);
@@ -17,6 +19,8 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         heldItemPos = itemPos;
         this.health = health;
         gameObject.transform.position = initPos;
+        collider = gameObject.AddComponent<BoxCollider>();
+        EventManager.instance.onCollision += HandleCollision;
     }
     public abstract void Move(Vector3 moveVector);
     public abstract void SetHeldObject(IUsable item);
@@ -36,6 +40,19 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         {
             activeEffects[0]?.Handle(activeEffects, this);
         }
+    }
+
+    public void HandleCollision(Collider _collider, List<IEffect> effects)
+    {
+        if (collider == null)
+        {
+            Debug.Log("Actor collider not found");
+           return;
+        }
+        if (_collider != collider) return;
+        activeEffects = effects;
+        HandleEffects();
+        Debug.Log("Actor was hit!");
     }
 }
 

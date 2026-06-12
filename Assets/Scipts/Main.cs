@@ -70,13 +70,14 @@ public class Main : MonoBehaviour
             new Vector3(0f, 0f, 0f), 
             999f,
             new Vector3(0f, 3f, 0f));
-        var gun = new Gun(
+        IWeapon gun = new Gun(
             weaponObject, 
             bulletObject, 
             player, 
             player.heldItemPos);
         // decorate gun
-
+        var fireDecorator = new FireDecorator();
+        gun = fireDecorator.Decorate(gun, 10);
         playerItem = gun;
     }
 }

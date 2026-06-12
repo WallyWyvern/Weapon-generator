@@ -45,21 +45,33 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
     {
         gameObject?.SetActive(true);
         EventManager.instance.onSendUpdateTick += this.Move;
+        EventManager.instance.onSendUpdateTick += this.CheckCollision;
     }
 
     public virtual void OnDissableObject()
     {
         gameObject?.SetActive(false);
         EventManager.instance.onSendUpdateTick -= this.Move;
+        EventManager.instance.onSendUpdateTick -= this.CheckCollision;
     }
 
     protected abstract void OnProjectileTimerFinished();
+
+    public virtual void CheckCollision()
+    {
+        
+        Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.5f);
+        foreach (Collider collider in hitColliders)
+        {
+            EventManager.instance.OnCollision(collider, effects);
+        }
+    }
 }
 
 
 public class Bullet : BaseProjectile
 {
-    public event Action<Bullet> onBulletTimerFinished;
+    public event Action<Bullet> onDespawnBullet;
 
     public Bullet() : base()
     {
@@ -69,7 +81,16 @@ public class Bullet : BaseProjectile
 
     protected override void OnProjectileTimerFinished()
     {
-         onBulletTimerFinished?.Invoke(this);
+         onDespawnBullet?.Invoke(this);
     }
+    public override void CheckCollision()
+    {
 
+        Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.1f);
+        foreach (Collider collider in hitColliders)
+        {
+            EventManager.instance.OnCollision(collider, effects);
+            onDespawnBullet?.Invoke(this);
+        }
+    }
 }

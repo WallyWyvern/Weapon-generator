@@ -21,6 +21,7 @@ public abstract class BaseRangedWeapon : IRangedWeapon
         gameObject = GameObject.Instantiate(go, owner.gameObject.transform);
         gameObject.transform.localPosition = offset;
         this.projectileObject = projectileGo;
+        weaponEffects = new List<IEffect>();
     }
 
     public abstract void Use();
@@ -43,7 +44,7 @@ public class Gun : BaseRangedWeapon
     {
         //owner.gameObject.transform.up = aimDirection;
         var tempBullet = bulletPool.RequestObject();
-        tempBullet.onBulletTimerFinished += HandleProjectileFinished;
+        tempBullet.onDespawnBullet += HandleProjectileFinished;
         tempBullet.Setup(projectileObject, 
             owner.aimDirection,
             projectileSpeed, 
@@ -54,7 +55,8 @@ public class Gun : BaseRangedWeapon
 
     private void HandleProjectileFinished(Bullet projectile)
     {
-        projectile.onBulletTimerFinished -= HandleProjectileFinished;
+        if (!projectile.active) return;
+        projectile.onDespawnBullet -= HandleProjectileFinished;
         bulletPool.ReturnObjectToPool(projectile);
     }
 }

@@ -36,12 +36,14 @@ public interface IProjectile
     List<IEffect> effects { get; set; }
     float projectileSpeed { get; set; }
     void Move();
+    void CheckCollision();
 }
 
 public interface IStatusEffectable : IDamageable
 {
     List<IEffect> activeEffects { get; set; }
     void HandleEffects();
+    void HandleCollision(Collider _collider, List<IEffect> effects);
 }
 
 public interface IDamageable
