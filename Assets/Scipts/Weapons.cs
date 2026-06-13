@@ -5,8 +5,8 @@ using UnityEngine;
 public abstract class BaseRangedWeapon : IRangedWeapon
 {
     public int magSize { get; set; }
-    public float reloadSpeed { get; set; }
-    public float attackSpeed { get; set; }
+    public float reloadTime { get; set; }
+    public float attackCooldown { get; set; }
     public float projectileSpeed { get; set; }
     public float projectileLifeTime { get; set; }
     public List<IEffect> weaponEffects { get; set; }
@@ -14,35 +14,57 @@ public abstract class BaseRangedWeapon : IRangedWeapon
     public GameObject projectileObject { get; set; }
 
     protected Player owner;
+    protected bool onCooldown;
+    protected int currentAmmo;
 
-    public BaseRangedWeapon(GameObject go, GameObject projectileGo, Player _owner, Vector3 offset)
+    protected Timer attackTimer;
+    protected Timer reloadTimer;
+
+    public BaseRangedWeapon(GameObject go, GameObject projectileGo, Player _owner)
     {
         owner = _owner;
         gameObject = GameObject.Instantiate(go, owner.gameObject.transform);
-        gameObject.transform.localPosition = offset;
         this.projectileObject = projectileGo;
         weaponEffects = new List<IEffect>();
+        onCooldown = false;
     }
 
     public abstract void Use();
+    public virtual void Reload()
+    {
+        currentAmmo = magSize;
+        onCooldown = false;
+    }
+
+    public void ResetCooldown() { onCooldown = false; }
+
 }
 
 
 public class Gun : BaseRangedWeapon 
 {
     private ObjectPool<Bullet> bulletPool = new ObjectPool<Bullet>();
-    public Gun(GameObject go, GameObject projectileGo, Player owner, Vector3 offset) : base(go, projectileGo, owner, offset) 
+    public Gun(GameObject go, GameObject projectileGo, Player owner) : base(go, projectileGo, owner) 
     {
-        // debug
-        projectileLifeTime = 2f;
-        projectileSpeed = 10f;
-        //gameObject.transform.position = new Vector3(0, 0, 0);
+        //// debug
+        //projectileLifeTime = 2f;
+        //projectileSpeed = 10f;
+        //magSize = 10;
+        //attackCooldown = 0.3f;
+        //reloadTime = 0.6f;
+        //currentAmmo = magSize;
         gameObject.SetActive(true);
     }
 
     public override void Use()
     {
-        //owner.gameObject.transform.up = aimDirection;
+        if (onCooldown) return;
+        if (currentAmmo <= 0) 
+        {
+            if (reloadTimer == null) reloadTimer = new Timer(reloadTime, Reload); else reloadTimer.Reset(reloadTime);
+            onCooldown = true;
+            return;
+        }
         var tempBullet = bulletPool.RequestObject();
         tempBullet.onDespawnBullet += HandleProjectileFinished;
         tempBullet.Setup(projectileObject, 
@@ -51,6 +73,9 @@ public class Gun : BaseRangedWeapon
             projectileLifeTime, 
             weaponEffects, 
             gameObject.transform.position);
+        currentAmmo--;
+        if (attackTimer == null) attackTimer = new Timer(attackCooldown, ResetCooldown); else attackTimer.Reset(attackCooldown);
+        onCooldown = true;
     }
 
     private void HandleProjectileFinished(Bullet projectile)

@@ -1,9 +1,13 @@
-using System.Collections.Generic;
+ using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class BaseActor : IGameObject, IStatusEffectable
 {
     public GameObject gameObject { get; set; }
+    public GameObject textObject { get; set; }
+    public TextMeshPro healthUI { get; set; }
     public IUsable heldItem { get; set; }
     public Vector3 heldItemPos { get; set; }
     public float moveSpeed { get; set; }
@@ -21,6 +25,7 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         gameObject.transform.position = initPos;
         collider = gameObject.AddComponent<BoxCollider>();
         EventManager.instance.onCollision += HandleCollision;
+        SetupUI();
     }
     public abstract void Move(Vector3 moveVector);
     public abstract void SetHeldObject(IUsable item);
@@ -28,9 +33,10 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
     public virtual void Damage(float damage)
     {
         health -= damage;
+        UpdateHealthUI();
     }
 
-    public void HandleEffects()
+    public virtual void HandleEffects()
     {
         for (int i = 0; i < activeEffects.Count - 1; i++)
         {
@@ -42,7 +48,7 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         }
     }
 
-    public void HandleCollision(Collider _collider, List<IEffect> effects)
+    public virtual void HandleCollision(Collider _collider, List<IEffect> effects)
     {
         if (collider == null)
         {
@@ -52,7 +58,25 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         if (_collider != collider) return;
         activeEffects = effects;
         HandleEffects();
+        // debug
         Debug.Log("Actor was hit!");
+    }
+
+    public virtual void UpdateHealthUI()
+    { 
+        healthUI?.SetText(health.ToString());
+    }
+
+    public virtual void SetupUI()
+    {
+        textObject = new GameObject();
+        healthUI = textObject.AddComponent<TextMeshPro>();
+        textObject.transform.parent = gameObject.transform;
+        textObject.transform.localPosition = new Vector3(0, 0.75f, 0);
+
+        healthUI.fontSize = 5;
+        healthUI.alignment = TextAlignmentOptions.Center;
+        UpdateHealthUI();
     }
 }
 

@@ -24,8 +24,8 @@ public interface IWeapon : IUsable
 public interface IRangedWeapon : IWeapon
 {
     int magSize { get; set; }
-    float reloadSpeed { get; set; }
-    float attackSpeed { get; set; }
+    float reloadTime { get; set; }
+    float attackCooldown { get; set; }
     float projectileSpeed { get; set; }
     float projectileLifeTime { get; set; }
 

@@ -15,6 +15,7 @@ public interface IHandler
 public abstract class BaseStatusEffect : IEffect
 {
     protected float duration;
+    protected IStatusEffectable owner;
     public IHandler NextHandler { get; set; }
 
     public BaseStatusEffect(int intensity) { 
@@ -24,13 +25,30 @@ public abstract class BaseStatusEffect : IEffect
 
     protected abstract void CalculateStatusEffect(int intensity);
 
-    public void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
+    public virtual void Handle(List<IEffect> activeEffects, IStatusEffectable _owner)
     { 
+        owner = _owner;
         UpdateEffect();
         NextHandler?.Handle(activeEffects, owner);
     }
 
     public abstract void UpdateEffect();
+}
+
+public class RegularDamage : BaseStatusEffect
+{
+    private float damage;
+    public RegularDamage(int intensity) : base(intensity) { }
+
+    public override void UpdateEffect()
+    {
+        owner.Damage(damage);
+    }
+
+    protected override void CalculateStatusEffect(int intensity)
+    {
+        damage = intensity / 10;
+    }
 }
 
 public class FireStatusEffect : BaseStatusEffect

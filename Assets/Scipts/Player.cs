@@ -25,4 +25,9 @@ public class Player : BaseActor
         heldItem = item;
         heldItem.gameObject.transform.localPosition = heldItemPos;
     }
+
+    public override void SetupUI()
+    {
+       // does nothing because I dont want player health right now
+    }
 }

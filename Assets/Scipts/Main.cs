@@ -30,20 +30,18 @@ public class Main : MonoBehaviour
 
         // input handling
         moveAction.action.Enable();
-        fireAction.action.started += triggerFire;
+        fireAction.action.Enable();
 
         InitializeGame();
-    }
-
-    private void triggerFire(InputAction.CallbackContext context)
-    {
-        playerItem.Use();
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (fireAction.action.ReadValue<float>() == 1) 
+        { 
+            player.heldItem.Use(); 
+        }
     }
 
     private void FixedUpdate()
@@ -70,14 +68,23 @@ public class Main : MonoBehaviour
             new Vector3(0f, 0f, 0f), 
             999f,
             new Vector3(0f, 3f, 0f));
-        IWeapon gun = new Gun(
+        IRangedWeapon gun = new Gun(
             weaponObject, 
             bulletObject, 
-            player, 
-            player.heldItemPos);
+            player);
         // decorate gun
-        var fireDecorator = new FireDecorator();
-        gun = fireDecorator.Decorate(gun, 10);
-        playerItem = gun;
+        DecorateRangedWeapon(gun);
+        player.SetHeldObject(gun);
+    }
+
+    private IRangedWeapon DecorateRangedWeapon(IRangedWeapon weapon)
+    {
+        int intensity = UnityEngine.Random.Range(25,100);
+        var rangedWeaponDecorator = new RangedWeaponDecorator();
+        weapon = rangedWeaponDecorator.DecorateRanged(weapon, intensity);
+
+        // decorate effects
+
+        return weapon;
     }
 }
