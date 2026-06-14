@@ -1,0 +1,32 @@
+@startuml
+interface IUsable{
++void Use()
+}
+
+interface IItem{
+#int maxStackSize
+#int count
++void AddToCount()
+}
+
+class Item
+
+class GridCell {
++Vector2 index
++IItem heldItem
++void UseItem()
+}
+
+class InventoryManager {
+#Vector2 currentIndex
+#List<GridCell> cellList
+#void UseItemInCell()
+}
+
+IItem <|.. IUsable
+Item <|-- IItem
+InventoryManager -- GridCell
+GridCell -- Item
+
+
+@enduml
