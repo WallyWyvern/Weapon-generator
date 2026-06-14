@@ -34,6 +34,11 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
     {
         health -= damage;
         UpdateHealthUI();
+
+        if (health <= 0)
+        { 
+            gameObject.SetActive(false);
+        }
     }
 
     public virtual void HandleEffects()

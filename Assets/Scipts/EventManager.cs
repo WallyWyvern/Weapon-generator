@@ -16,5 +16,8 @@ public class EventManager
 
     public event Action<Collider, List<IEffect>> onCollision;
     public void OnCollision(Collider collider, List<IEffect> effectList) { if (onCollision != null) { onCollision(collider, effectList); } }
-    
+
+
+    public event Action<EffectType> onWeaponDecorated;
+    public void WeaponDecorated(EffectType type) { if (onWeaponDecorated != null) { onWeaponDecorated(type); } }
 }

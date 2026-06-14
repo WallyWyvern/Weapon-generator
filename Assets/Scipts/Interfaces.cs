@@ -3,6 +3,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 
+// strictly for UI, very crude fix because of time crunch
+public enum EffectType
+{
+    fire,
+    ice,
+    poison
+}
+
 public interface IPoolable
 {
     bool active { get; set; }

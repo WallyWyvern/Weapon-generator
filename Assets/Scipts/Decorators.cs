@@ -2,17 +2,11 @@ using UnityEngine;
 
 public abstract class BaseWeaponDecorator
 {
-    public BaseWeaponDecorator()
-    {
-    }
-
     public abstract IWeapon Decorate(IWeapon weapon, int intensity);
 }
 
 public class RangedWeaponDecorator : BaseWeaponDecorator
 {
-    public RangedWeaponDecorator() : base() { }
-
     public override IWeapon Decorate(IWeapon weapon, int intensity)
     {
         // not required here
@@ -38,14 +32,39 @@ public class RangedWeaponDecorator : BaseWeaponDecorator
 
 public class FireDecorator : BaseWeaponDecorator
 {
-    public FireDecorator() : base() 
-    {
-    }
-
     public override IWeapon Decorate(IWeapon weapon, int intensity)
     {
+        // strictly for UI, very crude fix because of time crunch
+        EventManager.instance.WeaponDecorated(EffectType.fire);
+
         FireStatusEffect fireEffect = new FireStatusEffect(intensity);
         weapon.weaponEffects.Add(fireEffect);
+        return weapon;
+    }
+}
+
+public class PoisonDecorator : BaseWeaponDecorator
+{
+    public override IWeapon Decorate(IWeapon weapon, int intensity)
+    {
+        // strictly for UI, very crude fix because of time crunch
+        EventManager.instance.WeaponDecorated(EffectType.poison);
+
+        PoisonStatusEffect poisonEffect = new PoisonStatusEffect(intensity);
+        weapon.weaponEffects.Add(poisonEffect);
+        return weapon;
+    }
+}
+
+public class IceDecorator : BaseWeaponDecorator
+{
+    public override IWeapon Decorate(IWeapon weapon, int intensity)
+    {
+        // strictly for UI, very crude fix because of time crunch
+        EventManager.instance.WeaponDecorated(EffectType.ice);
+
+        IceStatusEffect iceEffect = new IceStatusEffect(intensity);
+        weapon.weaponEffects.Add(iceEffect);
         return weapon;
     }
 }

@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Timer
 {
+    public float timeLeft;
     private float duration;
-    private float timeLeft;
     private System.Action onFinished;
     public Timer(float _duration, System.Action _onFinished)
     {
