@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using System;
 
-
 public class ObjectPool<T> where T : IPoolable
 {
     private List<T> activePool = new List<T>();
@@ -13,7 +12,6 @@ public class ObjectPool<T> where T : IPoolable
     {
         T instance = (T)Activator.CreateInstance(typeof(T));
         inactivePool.Add(instance);
-        // Debug.Log("A new item has been added to the object pool")
         return instance;
     }
 

@@ -30,6 +30,7 @@ public abstract class BaseRangedWeapon : IRangedWeapon
     }
 
     public abstract void Use();
+
     public virtual void Reload()
     {
         currentAmmo = magSize;
@@ -37,22 +38,15 @@ public abstract class BaseRangedWeapon : IRangedWeapon
     }
 
     public void ResetCooldown() { onCooldown = false; }
-
 }
 
 
 public class Gun : BaseRangedWeapon 
 {
     private ObjectPool<Bullet> bulletPool = new ObjectPool<Bullet>();
+
     public Gun(GameObject go, GameObject projectileGo, Player owner) : base(go, projectileGo, owner) 
     {
-        //// debug
-        //projectileLifeTime = 2f;
-        //projectileSpeed = 10f;
-        //magSize = 10;
-        //attackCooldown = 0.3f;
-        //reloadTime = 0.6f;
-        //currentAmmo = magSize;
         gameObject.SetActive(true);
     }
 

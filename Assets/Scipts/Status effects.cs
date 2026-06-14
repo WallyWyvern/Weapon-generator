@@ -1,48 +1,39 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEffect : IHandler
-{ 
-    void UpdateEffect();
-}
-
-public interface IHandler
-{
-    IHandler NextHandler { get; set; }
-    void Handle(List<IEffect> activeEffects, IStatusEffectable owner);
-}
-
 public abstract class BaseStatusEffect : IEffect
 {
+    public IHandler nextHandler { get; set; }
+
     protected float duration;
     protected int intensity;
     protected IStatusEffectable owner;
     protected Timer timer;
     protected bool active = false;
-    public IHandler NextHandler { get; set; }
 
-    public BaseStatusEffect(int _intensity) { 
+    public BaseStatusEffect(int _intensity) 
+    { 
         intensity = _intensity;
-        //Debug.Log(intensity);
     }
-
-    protected abstract void CalculateStatusEffect(int intensity);
 
     public virtual void Handle(List<IEffect> activeEffects, IStatusEffectable _owner)
     { 
         owner = _owner;
-        CalculateStatusEffect(intensity);
         active = true;
+        CalculateStatusEffect(intensity);
         UpdateEffect();
-        NextHandler?.Handle(activeEffects, owner);
+        nextHandler?.Handle(activeEffects, owner);
     }
 
     public abstract void UpdateEffect();
+
+    protected abstract void CalculateStatusEffect(int intensity);
 }
 
 public class RegularDamage : BaseStatusEffect
 {
     public float damage;
+
     public RegularDamage(int intensity) : base(intensity) { }
 
     public override void UpdateEffect()
@@ -52,7 +43,7 @@ public class RegularDamage : BaseStatusEffect
 
     protected override void CalculateStatusEffect(int intensity)
     {
-        damage = intensity / 10;
+        damage = intensity / 10f;
     }
 }
 
@@ -61,9 +52,7 @@ public class FireStatusEffect : BaseStatusEffect
     private float tickRate;
     private float damage;
 
-    public FireStatusEffect(int intensity) : base(intensity) {
-        
-    }
+    public FireStatusEffect(int intensity) : base(intensity) { }
 
     public override void UpdateEffect()
     {
@@ -90,7 +79,11 @@ public class PoisonStatusEffect : BaseStatusEffect
 {
     private float tickRate = 0.5f;
     private float damage = 5f;
-    public PoisonStatusEffect(int intensity) : base(intensity) { duration = 0; }
+    public PoisonStatusEffect(int intensity) : base(intensity) 
+    { 
+        duration = 0; 
+    }
+
     public override void UpdateEffect()
     {
         if (duration <= 0)
@@ -112,7 +105,11 @@ public class PoisonStatusEffect : BaseStatusEffect
 public class IceStatusEffect : BaseStatusEffect
 {
     private float damage;
-    public IceStatusEffect(int intensity) : base(intensity) { duration = 3f; }
+    public IceStatusEffect(int intensity) : base(intensity) 
+    {
+        duration = 3f; 
+    }
+
     public override void UpdateEffect()
     {
         if (timer == null) timer = new Timer(duration, BurstDamage);

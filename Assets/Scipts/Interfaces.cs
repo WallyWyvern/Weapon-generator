@@ -2,13 +2,27 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-
 // strictly for UI, very crude fix because of time crunch
 public enum EffectType
 {
     fire,
     ice,
     poison
+}
+public interface IGameObject
+{
+    GameObject gameObject { get; set; }
+}
+
+public interface IHandler
+{
+    IHandler nextHandler { get; set; }
+    void Handle(List<IEffect> activeEffects, IStatusEffectable owner);
+}
+
+public interface IEffect : IHandler
+{
+    void UpdateEffect();
 }
 
 public interface IPoolable
@@ -36,7 +50,6 @@ public interface IRangedWeapon : IWeapon
     float attackCooldown { get; set; }
     float projectileSpeed { get; set; }
     float projectileLifeTime { get; set; }
-
 }
 
 public interface IProjectile
@@ -47,20 +60,15 @@ public interface IProjectile
     void CheckCollision();
 }
 
-public interface IStatusEffectable : IDamageable
-{
-    List<IEffect> activeEffects { get; set; }
-    void HandleEffects();
-    void HandleCollision(Collider _collider, List<IEffect> effects);
-}
-
 public interface IDamageable
 {
     float health { get; set; }
     void Damage(float damage);
 }
 
-public interface IGameObject
+public interface IStatusEffectable : IDamageable
 {
-    GameObject gameObject { get; set; }
+    List<IEffect> activeEffects { get; set; }
+    void HandleEffects();
+    void HandleCollision(Collider _collider, List<IEffect> effects);
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class EventManager
 {
     public static EventManager instance;
+
     public EventManager() { instance = this; }
 
     public event Action onSendUpdateTick;
@@ -16,7 +17,6 @@ public class EventManager
 
     public event Action<Collider, List<IEffect>> onCollision;
     public void OnCollision(Collider collider, List<IEffect> effectList) { if (onCollision != null) { onCollision(collider, effectList); } }
-
 
     public event Action<EffectType> onWeaponDecorated;
     public void WeaponDecorated(EffectType type) { if (onWeaponDecorated != null) { onWeaponDecorated(type); } }

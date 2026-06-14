@@ -12,10 +12,7 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
     public bool active { get; set; }
     protected Timer timer { get; set; }
 
-    protected BaseProjectile()
-    {
-
-    }
+    protected BaseProjectile() { }
 
     public virtual void Setup(GameObject go, Vector3 dir, float speed, float lifeTime, List<IEffect> effects, Vector3 startPosition)
     {
@@ -32,10 +29,9 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
             timer = new Timer(lifeTime, OnProjectileTimerFinished);
         }
         else { timer.Reset(lifeTime); }
-
     }
 
-    public virtual void Move() // trigger on update event
+    public virtual void Move()
     {
         if (!active) return;
         gameObject.transform.position += direction.normalized * projectileSpeed * Time.fixedDeltaTime;
@@ -59,7 +55,6 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
 
     public virtual void CheckCollision()
     {
-        
         Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.5f);
         foreach (Collider collider in hitColliders)
         {
@@ -68,24 +63,19 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
     }
 }
 
-
 public class Bullet : BaseProjectile
 {
     public event Action<Bullet> onDespawnBullet;
 
-    public Bullet() : base()
-    {
-       // Debug.Log("Bullet constructor triggered");
-
-    }
+    public Bullet() : base() { }
 
     protected override void OnProjectileTimerFinished()
     {
          onDespawnBullet?.Invoke(this);
     }
+
     public override void CheckCollision()
     {
-
         Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.1f);
         foreach (Collider collider in hitColliders)
         {

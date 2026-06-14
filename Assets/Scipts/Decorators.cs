@@ -29,7 +29,6 @@ public class RangedWeaponDecorator : BaseWeaponDecorator
     }
 }
 
-
 public class FireDecorator : BaseWeaponDecorator
 {
     public override IWeapon Decorate(IWeapon weapon, int intensity)

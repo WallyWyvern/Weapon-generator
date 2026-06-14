@@ -27,7 +27,9 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         EventManager.instance.onCollision += HandleCollision;
         SetupUI();
     }
+
     public abstract void Move(Vector3 moveVector);
+
     public abstract void SetHeldObject(IUsable item);
 
     public virtual void Damage(float damage)
@@ -45,7 +47,7 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
     {
         for (int i = 0; i < activeEffects.Count - 1; i++)
         {
-            activeEffects[i].NextHandler = activeEffects[i + 1];
+            activeEffects[i].nextHandler = activeEffects[i + 1];
         }
         if (activeEffects.Count > 0)
         {
@@ -57,14 +59,12 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
     {
         if (collider == null)
         {
-            Debug.Log("Actor collider not found");
+           Debug.Log("Actor collider not found");
            return;
         }
         if (_collider != collider) return;
         activeEffects = effects;
         HandleEffects();
-        // debug
-        Debug.Log("Actor was hit!");
     }
 
     public virtual void UpdateHealthUI()

@@ -139,7 +139,6 @@ public class Main : MonoBehaviour
         return weapon;
     }
 
-
     // Very bad solution, but I ran out of time to think of a proper one
     private void UpdateUI(EffectType type)
     {
