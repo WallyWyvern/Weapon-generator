@@ -22,6 +22,7 @@ public interface IHandler
 
 public interface IEffect : IHandler
 {
+    bool active { get; set; }
     void UpdateEffect();
 }
 

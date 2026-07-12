@@ -4,12 +4,13 @@ using UnityEngine;
 public abstract class BaseStatusEffect : IEffect
 {
     public IHandler nextHandler { get; set; }
+    public bool active { get; set; }
 
     protected float duration;
     protected int intensity;
     protected IStatusEffectable owner;
     protected Timer timer;
-    protected bool active = false;
+    
 
     public BaseStatusEffect(int _intensity) 
     { 
@@ -19,7 +20,7 @@ public abstract class BaseStatusEffect : IEffect
     public virtual void Handle(List<IEffect> activeEffects, IStatusEffectable _owner)
     { 
         owner = _owner;
-        active = true;
+        owner.activeEffects.Remove(this);
         CalculateStatusEffect(intensity);
         UpdateEffect();
         nextHandler?.Handle(activeEffects, owner);
@@ -59,7 +60,6 @@ public class FireStatusEffect : BaseStatusEffect
         if (duration <= 0)
         {
             active = false;
-            CalculateStatusEffect(intensity);
         } 
         if (!active) return;
         if (timer == null) timer = new Timer(tickRate, UpdateEffect); else timer.Reset(tickRate);

@@ -25,7 +25,11 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         gameObject.transform.position = initPos;
         collider = gameObject.AddComponent<BoxCollider>();
         EventManager.instance.onCollision += HandleCollision;
+        activeEffects = new List<IEffect>();
         SetupUI();
+
+        //Debug
+        activeEffects.Add(new FireImmunityEffect());
     }
 
     public abstract void Move(Vector3 moveVector);
@@ -49,6 +53,10 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         {
             activeEffects[i].nextHandler = activeEffects[i + 1];
         }
+        for (int i = 0; i < activeEffects.Count; i++)
+        {
+            activeEffects[i].active = true;
+        }
         if (activeEffects.Count > 0)
         {
             activeEffects[0]?.Handle(activeEffects, this);
@@ -63,7 +71,11 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
            return;
         }
         if (_collider != collider) return;
-        activeEffects = effects;
+
+        foreach (IEffect effect in effects)
+        {
+            activeEffects.Add(effect);
+        }
         HandleEffects();
     }
 
