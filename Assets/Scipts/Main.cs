@@ -101,7 +101,8 @@ public class Main : MonoBehaviour
             0f, 
             new Vector3(0f, 0f, 0f), 
             999f,
-            new Vector3(0f, 3f, 0f));
+            new Vector3(0f, 3f, 0f),
+            10);
         IRangedWeapon gun = new Gun(
             weaponObject, 
             bulletObject, 

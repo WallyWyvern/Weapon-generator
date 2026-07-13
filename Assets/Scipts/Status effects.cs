@@ -112,6 +112,7 @@ public class IceStatusEffect : BaseStatusEffect
 
     public override void UpdateEffect()
     {
+        if (!active) return;
         if (timer == null) timer = new Timer(duration, BurstDamage);
         if (timer.timeLeft <= 0)
         {

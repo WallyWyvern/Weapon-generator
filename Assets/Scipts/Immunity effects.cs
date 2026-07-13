@@ -39,3 +39,33 @@ public class FireImmunityEffect : BaseImmunityEffect
         base.Handle(activeEffects, owner);
     }
 }
+
+public class PoisonImmunityEffect : BaseImmunityEffect
+{
+    public override void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
+    {
+        foreach (var effect in activeEffects)
+        {
+            if (effect is PoisonStatusEffect)
+            {
+                foundEffects.Add(effect);
+            }
+        }
+        base.Handle(activeEffects, owner);
+    }
+}
+
+public class IceImmunityEffect : BaseImmunityEffect
+{
+    public override void Handle(List<IEffect> activeEffects, IStatusEffectable owner)
+    {
+        foreach (var effect in activeEffects)
+        {
+            if (effect is IceStatusEffect)
+            {
+                foundEffects.Add(effect);
+            }
+        }
+        base.Handle(activeEffects, owner);
+    }
+}

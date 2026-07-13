@@ -27,9 +27,6 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         EventManager.instance.onCollision += HandleCollision;
         activeEffects = new List<IEffect>();
         SetupUI();
-
-        //Debug
-        activeEffects.Add(new FireImmunityEffect());
     }
 
     public abstract void Move(Vector3 moveVector);
@@ -100,10 +97,12 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
 
 public class Enemy : BaseActor
 {
+    private int immunityChance;
 
-
-    public Enemy(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos) : base(go, speed, itemPos, health, initPos)
+    public Enemy(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos, int immunityChance) : base(go, speed, itemPos, health, initPos)
     {
+        this.immunityChance = immunityChance;
+        SetImmunity();
     }
 
     public override void Move(Vector3 moveVector)
@@ -114,5 +113,30 @@ public class Enemy : BaseActor
     public override void SetHeldObject(IUsable item)
     {
         
+    }
+
+    private void SetImmunity()
+    {
+        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        if (Random.Range(0,100) <= immunityChance)
+        {
+            activeEffects.Add(new FireImmunityEffect());
+            spriteRenderer.color = Color.orange;
+            return;
+        }
+
+        if (Random.Range(0, 100) <= immunityChance)
+        {
+            activeEffects.Add(new PoisonImmunityEffect());
+            spriteRenderer.color = Color.green;
+            return;
+        }
+
+        if (Random.Range(0, 100) <= immunityChance)
+        {
+            activeEffects.Add(new IceImmunityEffect());
+            spriteRenderer.color = Color.lightBlue;
+            return;
+        }
     }
 }
