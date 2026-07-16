@@ -41,7 +41,7 @@ public class Main : MonoBehaviour
         // input handling
         moveAction.action.Enable();
         fireAction.action.Enable();
-        newGunAction.action.started += GenerateNewGun;
+        newGunAction.action.started += NewGunDebug;
 
         // UI
         fireStatsUI.gameObject.SetActive(false);
@@ -49,6 +49,10 @@ public class Main : MonoBehaviour
         iceStatsUI.gameObject.SetActive(false);
         weaponStrengthUI.gameObject.SetActive(false);
         EventManager.instance.onWeaponDecorated += UpdateUI;
+
+        // gameloop events
+        EventManager.instance.onEnemyDeath += EnemyDied;
+        EventManager.instance.onPlayerDeath += PlayerDied;
 
         InitializeGame();
     }
@@ -72,7 +76,12 @@ public class Main : MonoBehaviour
         player.Move(moveDirection);
     }
 
-    private void GenerateNewGun(InputAction.CallbackContext context)
+    private void NewGunDebug(InputAction.CallbackContext context)
+    {
+        GenerateNewGun();
+    }
+
+    private void GenerateNewGun()
     {
         // reset UI
         fireStatsUI.gameObject.SetActive(false);
@@ -96,18 +105,12 @@ public class Main : MonoBehaviour
             new Vector3(0f, 0.5f, 0f), 
             100f, 
             new Vector3(0f,0f,0f));
-        targetDummy = new Enemy(
-            enemyObject, 
-            0f, 
-            new Vector3(0f, 0f, 0f), 
-            999f,
-            new Vector3(0f, 3f, 0f),
-            10);
         IRangedWeapon gun = new Gun(
             weaponObject, 
             bulletObject, 
             player);
         // decorate gun
+        CreateEnemy();
         DecorateRangedWeapon(gun);
         player.SetHeldObject(gun);
     }
@@ -155,5 +158,33 @@ public class Main : MonoBehaviour
                 iceStatsUI.gameObject.SetActive(true);
                 break;
         }
+    }
+
+    private void CreateEnemy()
+    {
+        var enemyHealth = UnityEngine.Random.Range(100, 200);
+        var enemySpeed = UnityEngine.Random.Range(1f, 3f);
+        var startPos = new Vector3(UnityEngine.Random.Range(-10f, 10f), UnityEngine.Random.Range(-10f, 10f), 0);
+        var newEnemy = new Enemy(
+            enemyObject,
+            enemySpeed,
+            new Vector3(0f, 0f, 0f),
+            enemyHealth,
+            startPos,
+            10);
+    }
+
+    private void EnemyDied()
+    {
+        // Increase Score
+        
+        CreateEnemy();
+        if (UnityEngine.Random.Range(0f, 10f) <= 2.5f) CreateEnemy();
+        GenerateNewGun();
+    }
+
+    private void PlayerDied()
+    { 
+        
     }
 }

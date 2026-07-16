@@ -41,6 +41,7 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         if (health <= 0)
         { 
             gameObject.SetActive(false);
+            // call pool stuff here if I do that
         }
     }
 
@@ -98,21 +99,35 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
 public class Enemy : BaseActor
 {
     private int immunityChance;
+    private bool isDead = false;
 
     public Enemy(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos, int immunityChance) : base(go, speed, itemPos, health, initPos)
     {
         this.immunityChance = immunityChance;
         SetImmunity();
+
+        EventManager.instance.onPlayerMoved += SetMoveVector;
     }
 
     public override void Move(Vector3 moveVector)
     {
-        
+        gameObject.transform.position += moveVector * moveSpeed * Time.fixedDeltaTime;
     }
 
     public override void SetHeldObject(IUsable item)
     {
         
+    }
+
+    public override void Damage(float damage)
+    {
+        base.Damage(damage);
+        if (health <= 0)
+        {
+            EventManager.instance.onPlayerMoved -= SetMoveVector;
+            if (!isDead) EventManager.instance.EnemyDeath();
+            isDead = true; // replace with isactive from objectpool
+        }
     }
 
     private void SetImmunity()
@@ -138,5 +153,12 @@ public class Enemy : BaseActor
             spriteRenderer.color = Color.lightBlue;
             return;
         }
+    }
+
+    private void SetMoveVector(Vector3 pos) 
+    {
+        var aimDirection = pos - gameObject.transform.position;
+        aimDirection.Normalize();
+        Move(aimDirection);
     }
 }

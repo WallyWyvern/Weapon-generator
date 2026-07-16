@@ -15,6 +15,7 @@ public class Player : BaseActor
         aimDirection = mousePosition - gameObject.transform.position;
         aimDirection.Normalize();
         gameObject.transform.up = aimDirection;
+        EventManager.instance.PlayerMoved(gameObject.transform.position);
     }
 
     public override void SetHeldObject(IUsable item)
