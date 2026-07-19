@@ -20,8 +20,8 @@ public class EventManager
     public void PlayerMoved(Vector3 newPos) { if (onPlayerMoved != null) { onPlayerMoved(newPos); } }
 
     // weapon events
-    public event Action<Collider, List<IEffect>> onCollision;
-    public void OnCollision(Collider collider, List<IEffect> effectList) { if (onCollision != null) { onCollision(collider, effectList); } }
+    public event Action<Collider, List<IEffect>> onBulletCollision;
+    public void OnBulletCollision(Collider collider, List<IEffect> effectList) { if (onBulletCollision != null) { onBulletCollision(collider, effectList); } }
 
     public event Action<EffectType> onWeaponDecorated;
     public void WeaponDecorated(EffectType type) { if (onWeaponDecorated != null) { onWeaponDecorated(type); } }
@@ -32,4 +32,7 @@ public class EventManager
 
     public event Action onPlayerDeath;
     public void PlayerDeath() { if (onPlayerDeath != null) { onPlayerDeath(); } }
+
+    public event Action<Collider> onEnemyCollision;
+    public void OnEnemyCollision(Collider collider) { if (onEnemyCollision != null) { onEnemyCollision(collider); } }
 }

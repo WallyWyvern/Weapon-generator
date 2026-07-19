@@ -15,6 +15,7 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
     public List<IEffect> activeEffects { get; set; }
 
     protected Collider collider { get; set; }
+    protected bool isDead = false;
 
     public BaseActor(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos)
     {
@@ -23,8 +24,7 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
         heldItemPos = itemPos;
         this.health = health;
         gameObject.transform.position = initPos;
-        collider = gameObject.AddComponent<BoxCollider>();
-        EventManager.instance.onCollision += HandleCollision;
+        EventManager.instance.onBulletCollision += HandleCollision;
         activeEffects = new List<IEffect>();
         SetupUI();
     }
@@ -99,14 +99,15 @@ public abstract class BaseActor : IGameObject, IStatusEffectable
 public class Enemy : BaseActor
 {
     private int immunityChance;
-    private bool isDead = false;
 
     public Enemy(GameObject go, float speed, Vector3 itemPos, float health, Vector3 initPos, int immunityChance) : base(go, speed, itemPos, health, initPos)
     {
+        collider = gameObject.AddComponent<BoxCollider>();
         this.immunityChance = immunityChance;
         SetImmunity();
 
         EventManager.instance.onPlayerMoved += SetMoveVector;
+        EventManager.instance.onSendUpdateTick += this.CheckCollision;
     }
 
     public override void Move(Vector3 moveVector)
@@ -125,6 +126,7 @@ public class Enemy : BaseActor
         if (health <= 0)
         {
             EventManager.instance.onPlayerMoved -= SetMoveVector;
+            EventManager.instance.onSendUpdateTick -= this.CheckCollision;
             if (!isDead) EventManager.instance.EnemyDeath();
             isDead = true; // replace with isactive from objectpool
         }
@@ -160,5 +162,14 @@ public class Enemy : BaseActor
         var aimDirection = pos - gameObject.transform.position;
         aimDirection.Normalize();
         Move(aimDirection);
+    }
+
+    public void CheckCollision()
+    {
+        Collider[] hitColliders = Physics.OverlapBox(gameObject.transform.position, new Vector3(0.5f, 0.5f, 0));
+        foreach (Collider collider in hitColliders)
+        {
+            EventManager.instance.OnEnemyCollision(collider);
+        }
     }
 }

@@ -58,7 +58,7 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
         Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.5f);
         foreach (Collider collider in hitColliders)
         {
-            EventManager.instance.OnCollision(collider, effects);
+            EventManager.instance.OnBulletCollision(collider, effects);
         }
     }
 }
@@ -79,7 +79,7 @@ public class Bullet : BaseProjectile
         Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.1f);
         foreach (Collider collider in hitColliders)
         {
-            EventManager.instance.OnCollision(collider, effects);
+            EventManager.instance.OnBulletCollision(collider, effects);
             onDespawnBullet?.Invoke(this);
         }
     }

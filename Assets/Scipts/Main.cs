@@ -11,6 +11,7 @@ public class Main : MonoBehaviour
     [SerializeField] InputActionReference moveAction;
     [SerializeField] InputActionReference fireAction;
     [SerializeField] InputActionReference newGunAction;
+    [SerializeField] InputActionReference startGame;
 
     [Header("References")]
     [SerializeField] GameObject playerObject;
@@ -23,6 +24,13 @@ public class Main : MonoBehaviour
     [SerializeField] TextMeshProUGUI poisonStatsUI;
     [SerializeField] TextMeshProUGUI iceStatsUI;
     [SerializeField] TextMeshProUGUI weaponStrengthUI;
+    [SerializeField] TextMeshProUGUI scoreUI;
+    [SerializeField] TextMeshProUGUI gameOverScoreUI;
+
+    [Header("Scene references")]
+    [SerializeField] Canvas startScreen;
+    [SerializeField] Canvas gameOverScreen;
+    [SerializeField] Canvas gameUI;
 
     [Header("Game settings")]
     [SerializeField] float playerSpeed = 0.1f;
@@ -32,30 +40,20 @@ public class Main : MonoBehaviour
     private IUsable playerItem;
     private Enemy targetDummy;
     private EventManager eventManager;
+    private int score = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         eventManager = new EventManager();
-
-        // input handling
-        moveAction.action.Enable();
-        fireAction.action.Enable();
-        newGunAction.action.started += NewGunDebug;
-
-        // UI
-        fireStatsUI.gameObject.SetActive(false);
-        poisonStatsUI.gameObject.SetActive(false);
-        iceStatsUI.gameObject.SetActive(false);
-        weaponStrengthUI.gameObject.SetActive(false);
-        EventManager.instance.onWeaponDecorated += UpdateUI;
-
-        // gameloop events
-        EventManager.instance.onEnemyDeath += EnemyDied;
-        EventManager.instance.onPlayerDeath += PlayerDied;
-
-        InitializeGame();
+        Time.timeScale = 0;
+        gameUI.enabled = false;
+        gameOverScreen.enabled = false;
+        startScreen.enabled = true;
+        startGame.action.started += StartGamePressed;
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -76,9 +74,40 @@ public class Main : MonoBehaviour
         player.Move(moveDirection);
     }
 
+    private void StartGame()
+    {
+        Time.timeScale = 1;
+
+        // input handling
+        moveAction.action.Enable();
+        fireAction.action.Enable();
+        newGunAction.action.started += NewGunDebug;
+        startGame.action.started -= StartGamePressed;
+
+        // UI
+        fireStatsUI.gameObject.SetActive(false);
+        poisonStatsUI.gameObject.SetActive(false);
+        iceStatsUI.gameObject.SetActive(false);
+        weaponStrengthUI.gameObject.SetActive(false);
+        EventManager.instance.onWeaponDecorated += UpdateUI;
+
+        // gameloop events
+        EventManager.instance.onEnemyDeath += EnemyDied;
+        EventManager.instance.onPlayerDeath += PlayerDied;
+
+        InitializeGame();
+    }
+
     private void NewGunDebug(InputAction.CallbackContext context)
     {
         GenerateNewGun();
+    }
+
+    private void StartGamePressed(InputAction.CallbackContext context)
+    {
+        startScreen.enabled = false;
+        gameUI.enabled = true;
+        StartGame();
     }
 
     private void GenerateNewGun()
@@ -113,6 +142,7 @@ public class Main : MonoBehaviour
         CreateEnemy();
         DecorateRangedWeapon(gun);
         player.SetHeldObject(gun);
+        scoreUI.text = "Score: " + score.ToString();
     }
 
     private IRangedWeapon DecorateRangedWeapon(IRangedWeapon weapon)
@@ -176,15 +206,35 @@ public class Main : MonoBehaviour
 
     private void EnemyDied()
     {
-        // Increase Score
-        
+        IncreaseScore();
         CreateEnemy();
         if (UnityEngine.Random.Range(0f, 10f) <= 2.5f) CreateEnemy();
         GenerateNewGun();
     }
 
     private void PlayerDied()
-    { 
-        
+    {
+        EndGame();
+    }
+
+    private void EndGame()
+    {
+        moveAction.action.Disable();
+        fireAction.action.Disable();
+        newGunAction.action.started -= NewGunDebug;
+
+        EventManager.instance.onWeaponDecorated -= UpdateUI;
+        EventManager.instance.onEnemyDeath -= EnemyDied;
+        EventManager.instance.onPlayerDeath -= PlayerDied;
+
+        gameUI.enabled = false;
+        gameOverScreen.enabled = true;
+        gameOverScoreUI.text = "Game Over" + "<br>Score: " + score.ToString();
+    }
+
+    private void IncreaseScore()
+    {
+        score++;
+        scoreUI.text = "Score: " + score.ToString();
     }
 }
