@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -59,28 +58,6 @@ public abstract class BaseProjectile : IProjectile, IGameObject, IPoolable
         foreach (Collider collider in hitColliders)
         {
             EventManager.instance.OnBulletCollision(collider, effects);
-        }
-    }
-}
-
-public class Bullet : BaseProjectile
-{
-    public event Action<Bullet> onDespawnBullet;
-
-    public Bullet() : base() { }
-
-    protected override void OnProjectileTimerFinished()
-    {
-         onDespawnBullet?.Invoke(this);
-    }
-
-    public override void CheckCollision()
-    {
-        Collider[] hitColliders = Physics.OverlapSphere(gameObject.transform.position, 0.1f);
-        foreach (Collider collider in hitColliders)
-        {
-            EventManager.instance.OnBulletCollision(collider, effects);
-            onDespawnBullet?.Invoke(this);
         }
     }
 }
